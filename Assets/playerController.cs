@@ -9,12 +9,10 @@ public class playerController : MonoBehaviour
     Rigidbody2D myRigidbody;
 
     private float jumpforce = 600.0f;
-    private float runforce = 40.0f;
-    private float jumpDownforce = -3.0f;
-    private float runDownforce = -7.0f;
-    private float maxRunspeed = 6.0f;
+    private float runforce = 30.0f;
+    private float maxRunspeed = 2.5f;
     //ジャンプ速度減衰
-    private float dump = -50f;
+    private float damping = -50f;
     private float groundLevel = -1.0f;
 
     //float timeCounter = 0;
@@ -40,26 +38,25 @@ public class playerController : MonoBehaviour
         //timeCounter += Time.deltaTime;
         bool isGround = (transform.position.y > this.groundLevel) ? false : true;
         myanimator.SetBool("isground", isGround);            
-        myRigidbody.AddForce(transform.right * this.runDownforce);
-        myRigidbody.AddForce(transform.up * this.jumpDownforce);
-        
-
 
         if (isEnd==false)
         {
             //プレーヤーの速度
             float speedx = Mathf.Abs(this.myRigidbody.velocity.x);
 
-            if (Input.GetKeyDown(KeyCode.UpArrow) && isGround)
+            if (transform.position.y > -1.77f)
             {
-                myRigidbody.AddForce(transform.up * this.jumpforce);
-            }
-
-            if (Input.GetKey(KeyCode.UpArrow) == false)
-            {
-                if (myRigidbody.velocity.y > 0)
+                if (Input.GetKeyDown(KeyCode.Space) && isGround)
                 {
-                    myRigidbody.AddForce(transform.up * this.dump);
+                    myRigidbody.AddForce(transform.up * this.jumpforce);
+                }
+
+                if (Input.GetKey(KeyCode.Space) == false)
+                {
+                    if (myRigidbody.velocity.y > 0)
+                    {
+                        myRigidbody.AddForce(transform.up * this.damping);
+                    }
                 }
             }
 
@@ -97,19 +94,19 @@ public class playerController : MonoBehaviour
 
         }
 
-        if(transform.position.y<-5.0f)
+        if(transform.position.y<-7.0f)
         {
             isEnd = true;
             GameObject.Find("Canvas").GetComponent<UIController>().gameOver();
             //自由落下を停止
-            myRigidbody.velocity = Vector2.zero;
+            GetComponent<Rigidbody2D>().simulated = false;
             //衝突をなくす
             GetComponent<CapsuleCollider2D>().enabled = false;
         }
         
         if(isEnd)
         {
-            if(Input.GetKeyDown(KeyCode.LeftShift))
+            if(Input.GetKeyDown(KeyCode.Return))
             {
                 isEnd = false;
                 SceneManager.LoadScene("SampleScene");
@@ -123,6 +120,7 @@ public class playerController : MonoBehaviour
         {
             isEnd = true;
             GameObject.Find("Canvas").GetComponent<UIController>().gameClear();
+            myanimator.SetFloat("speed", 0);
         }
 
         if(other.gameObject.tag=="cherry")
@@ -131,6 +129,17 @@ public class playerController : MonoBehaviour
             Destroy(other.gameObject);
             GameObject itemEffect = Instantiate(itemEffectPrefab, this.transform.position, Quaternion.identity);
             Destroy(itemEffect.gameObject, 0.3f);
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if(other.gameObject.tag=="enemy")
+        {
+            isEnd = true;
+            GameObject.Find("Canvas").GetComponent<UIController>().gameOver();
+            GetComponent<CapsuleCollider2D>().enabled = false;
+            myanimator.SetFloat("speed", 0);
         }
     }
 }

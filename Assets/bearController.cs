@@ -19,7 +19,7 @@ public class bearController : MonoBehaviour
 
     //private float walkforce = 33.5f;
 
-    private float rightVelocity = 7.0f;
+    private float rightVelocity = 3.0f;
 
     //------------------------------------------------------------------------------------------------------------------
     //スタート
@@ -41,24 +41,24 @@ public class bearController : MonoBehaviour
     //オリジナル関数
     //------------------------------------------------------------------------------------------------------------------
 
-    //距離を求める
-    float getLength(Vector3 current, Vector3 target)
+    //距離を求める（2D）
+    float getLength2D(Vector2 current, Vector2 target)
     {
-        return Mathf.Sqrt(((current.x - target.x) * (current.x - target.x)) + ((current.z - target.z) * (current.z - target.z)));
+        return Mathf.Sqrt(((current.x - target.x) * (current.x - target.x)) + ((current.y - target.y) * (current.y - target.y)));
     }
 
-    //方向を求める ※オイラー（-180～0～+180)
-    float getEulerAngle(Vector3 current, Vector3 target)
+    //方向を求める（2D） ※オイラー（-180～0～+180)
+    float getEulerAngle2D(Vector2 current, Vector2 target)
     {
         Vector3 value = target - current;
-        return Mathf.Atan2(value.x, value.z) * Mathf.Rad2Deg; //ラジアン→オイラー
+        return Mathf.Atan2(value.x, value.y) * Mathf.Rad2Deg; //ラジアン→オイラー
     }
 
-    //方向を求める ※ラジアン
-    float getRadian(Vector3 current, Vector3 target)
+    //方向を求める（2D） ※ラジアン
+    float getRadian2D(Vector2 current, Vector2 target)
     {
         Vector3 value = target - current;
-        return Mathf.Atan2(value.x, value.z);
+        return Mathf.Atan2(value.x, value.y);
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -70,10 +70,10 @@ public class bearController : MonoBehaviour
         timeCounter += Time.deltaTime;
 
         //方向を求める
-        float direction = getEulerAngle(this.transform.position, player.transform.position);
+        float direction = getEulerAngle2D(this.transform.position, player.transform.position);
 
         //距離を求める
-        float length = getLength(this.transform.position, player.transform.position);
+        float length = getLength2D(this.transform.position, player.transform.position);
 
         //**************************************************************************************************************
         //ここから状態処理
@@ -188,6 +188,7 @@ public class bearController : MonoBehaviour
         if(other.gameObject.tag=="wall")
         {
             myanimator.SetFloat("speed", 1.0f);
+            myRigidbody.velocity = transform.right * rightVelocity;
         }
 
         //Debug.Log("残りHP" + this.HP);
