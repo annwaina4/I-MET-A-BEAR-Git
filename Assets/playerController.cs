@@ -10,7 +10,7 @@ public class playerController : MonoBehaviour
 
     private float jumpforce = 600.0f;
     private float runforce = 30.0f;
-    private float maxRunspeed = 2.5f;
+    private float maxRunspeed = 3.0f;
     //ƒWƒƒƒ“ƒv‘¬“xŒ¸Š
     private float damping = -50f;
     private float groundLevel = -1.0f;

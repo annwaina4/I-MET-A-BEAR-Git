@@ -19,7 +19,7 @@ public class bearController : MonoBehaviour
 
     //private float walkforce = 33.5f;
 
-    private float rightVelocity = 3.0f;
+    private float rightVelocity = 3.5f;
 
     //------------------------------------------------------------------------------------------------------------------
     //スタート
